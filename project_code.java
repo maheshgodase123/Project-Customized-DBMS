@@ -9,7 +9,7 @@ class Student
 	
 	private static int Generator;
 
-	static		// check google
+	static		// check book
 	{
 		Generator = 0;
 	}
@@ -23,7 +23,7 @@ class Student
 	
 	public void DisplayData()
 	{
-		System.out.println(this.RID + "\t" + this.Name + "\t" + this.Salary);
+		System.out.println("|"+this.RID + "\t\t|" + this.Name + "\t\t|" + this.Salary+"|");
 	}
 }
 
@@ -51,22 +51,18 @@ class DBMS
 
 			Query = scanobj.nextLine();
 
-			String tokens[] = Query.split(" ");
+			String tokens[] = Query.toLowerCase().split(" ");
 
 			int QuerySize = tokens.length;
 
 			if(QuerySize == 1)
 			{
-				if("Help".equals(tokens[0]))
+				if("help".equals(tokens[0]))
 				{
-					System.out.println("This application is used to demonstarte Customised DBMS");
-					System.out.println("Exit : Terminate DBMS");
-					System.out.println("Display All Data : select * from student");
-					System.out.println("Insert Data : Insert into student Name Salary");
-					System.out.println("Display Data : Display student from student");
+					DisplayHelp();
 				}
 			
-				else if("Exit".equals(tokens[0]))
+				else if("exit".equals(tokens[0]))
 				{
 					System.out.println("Thank You For Using Customised DBMS");
 					break;
@@ -74,7 +70,10 @@ class DBMS
 			}
 			else if(QuerySize == 2)
 			{
-				
+				if("man".equals(tokens[0]))
+				{
+					DisplayMan(tokens[1]);
+				}
 			}
 			else if(QuerySize == 4)
 			{
@@ -84,12 +83,32 @@ class DBMS
 					{
 						DisplayAll();
 					}
+					else if("max".equals(tokens[1]))
+					{
+						AggregateMax();
+					}
+					else if("min".equals(tokens[1]))
+					{
+						AggregateMin();
+					}
+					else if("avg".equals(tokens[1]))
+					{
+						AggregateAverage();
+					}
+					else if("sum".equals(tokens[1]))
+					{
+						AggregateSum();
+					}
+					else if("count".equals(tokens[1]))
+					{
+						AggregateCount();
+					}
 				}
 			}
 			else if(QuerySize == 5)
 			{
 				// Insert into student Piyush 1000;
-				if("Insert".equals(tokens[0]))
+				if("insert".equals(tokens[0]))
 				{
 					InsertData(tokens[3],Integer.parseInt(tokens[4]));
 				}
@@ -97,7 +116,82 @@ class DBMS
 		}
 	} 
 
-	// Insert Data In Data
+	// Displays Help
+	public void DisplayHelp()
+	{
+		System.out.println("|---------------------------------------------------------|");
+		System.out.println("|This application is used to demonstarte Customised DBMS  |");
+		System.out.println("|---------------------------------------------------------|");
+		System.out.println("man               : Displays Manuals Of Queries Syntax - man query");
+		System.out.println("exit              : Terminates DBMS");
+		System.out.println("display_all       : Displays All Data");
+		System.out.println("insert            : Inserts Data Into Table");
+		System.out.println("display           : display specific from student");
+		System.out.println("max               : Displays Maximum Amongst Records");
+		System.out.println("min               : Displays Minimum Amongst Records");
+		System.out.println("avg               : Displays Average Of Records");
+		System.out.println("sum               : Displays Sum Of Records");
+		System.out.println("count             : Displays No Of Records In Table");
+	}
+
+	public void DisplayMan(String name)
+	{
+		System.out.println("|---------------------------------------------------------|");
+		System.out.println("|                 Manual Customize DBMS                   |");
+		System.out.println("|---------------------------------------------------------|");
+
+		if("man".equals(name))
+		{
+			System.out.println("Description : Displays Manual Of Query");
+			System.out.println("Syntax      : man query");
+		}
+		else if("exit".equals(name))
+		{
+			System.out.println("Description : Exits From Customize DBMS Console");
+			System.out.println("Syntax      : exit");
+		}
+		else if("insert".equals(name))
+		{
+			System.out.println("Description : Inserts Data Into Table");
+			System.out.println("Syntax      : insert into table_name person_name salary");
+		}
+		else if("display_all".equals(name))
+		{
+			System.out.println("Description : Displays All Data From Table");
+			System.out.println("Syntax      : select * from student");
+		}
+		else if("display".equals(name))
+		{
+			System.out.println("Description : Displays Specific Data From Table");
+			System.out.println("Syntax      : select rid/name from student");
+		}
+		else if("max".equals(name))
+		{
+			System.out.println("Description : Displays Maximum Record Salary ");
+			System.out.println("Syntax      : select max from student");
+		}
+		else if("min".equals(name))
+		{
+			System.out.println("Description : Displays Minimum Record Salary ");
+			System.out.println("Syntax      : select min from student");
+		}
+		else if("avg".equals(name))
+		{
+			System.out.println("Description : Displays Average Of Salary ");
+			System.out.println("Syntax      : select avg from student");
+		}
+		else if("sum".equals(name))
+		{
+			System.out.println("Description : Displays Sum Of Salary ");
+			System.out.println("Syntax      : select sum from student");
+		}
+		else if("count".equals(name))
+		{
+			System.out.println("Description : Displays No of Records In Table ");
+			System.out.println("Syntax      : select count from student");
+		}
+	}
+	// insert into student name salary
 	public void InsertData(String str, int value)
 	{
 		Student sobj = new Student(str,value);
@@ -107,6 +201,7 @@ class DBMS
 	// Display All 
 	public void DisplayAll()
 	{
+		System.out.println("|RID            |            Name           |     salary          |");
 		for(Student sref: lobj)		// student cha object
 		{
 			sref.DisplayData();
@@ -116,25 +211,39 @@ class DBMS
 	// Display By RID
 	public void DisplaySpecific(int rid)	// display data of given rid
 	{
+		int count = 0;
 		for(Student sref: lobj)		
 		{
+			count++;
 			if(sref.RID == rid)
 			{
 				sref.DisplayData();
 				break;
 			}
 		}
+
+		if(count == lobj.size())
+		{
+			System.out.println("Enter Valid RID!!");
+		}
 	}
 
 	// Display By Name
 	public void DisplaySpecific(String name)	// overloaded
 	{
+		int count = 0;
 		for(Student sref: lobj)
 		{
+			count++;
 			if(sref.Name.equals(name))
 			{
 				sref.DisplayData();
 			}
+		}
+
+		if(count == lobj.size())
+		{
+			System.out.println("Enter Valid Name!!");
 		}
 	}
 
